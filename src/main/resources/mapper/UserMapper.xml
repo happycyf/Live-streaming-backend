@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="top.vx520.mapper.UserMapper">
+    <select id="query" resultType="LoginPojo">
+        select * from user where account=#{account} and pwd=#{pwd} and uTypeId=3
+    </select>
+    <insert id="registerUser">
+        INSERT INTO user VALUES (default,#{uName},#{account},#{pwd},#{img},0,0,0,#{phone},#{sex},#{adress},3,#{uKey})
+    </insert>
+    <select id="queryPhone" resultType="String">
+        select uid from user where phone = #{phone}
+    </select>
+    <select id="getOldPassword" resultType="String">
+        select pwd from user where account=#{account}
+    </select>
+    <update id="setPassWord">
+        UPDATE `user` SET  pwd=#{password} WHERE phone= #{phone}
+    </update>
+    <select id="getImgSrc" resultType="String">
+        select img from user where account=#{account}
+    </select>
+    <select id="getFan" resultType="Integer">
+        select fan from user where account = #{account}
+    </select>
+    <select id="getTKey" resultType="String">
+        select tKey from user where account=#{account}
+    </select>
+
+    <select id="getUserFenSi" resultType="UserFenSiPojo">
+        select * from userattentionview where FollowUid=(select uId from user where account =#{account}) order by monetary desc limit 0 ,100
+    </select>
+    <select id="getJinRiLiWu" resultType="JinRiLiWuShouYiPojo">
+        SELECT
+        SUM(giftMoney) 'giftMoney',(SELECT uName from `user` us WHERE us.uId=ac.sendId) 'uName'
+        FROM acceptgift ac
+        WHERE ac.account= #{account}
+        and YEAR(sendTime)=YEAR(NOW())
+        AND MONTH(sendTime)=MONTH(NOW())
+        AND DAY(sendTime)=DAY(NOW())
+        GROUP BY sendId
+    </select>
+    <select id="getBlance" resultType="double">
+        select blance from user where account=#{account}
+    </select>
+    <select id="getToDayMoney" resultType="double">
+        SELECT ifnull(SUM(giftMoney),0) FROM `acceptgift` WHERE DATE(sendTime)= CURDATE()  AND account =#{account}
+    </select>
+    <select id="getYesterdayMoney" resultType="double">
+        SELECT ifnull(SUM(giftMoney),0) FROM `acceptgift` WHERE (sendTime BETWEEN CONCAT(DATE_FORMAT(NOW(),'%Y-%m'),'-',DAY(NOW())-1,' 00:00:00') and CONCAT(DATE_FORMAT(NOW(),'%Y-%m'),'-',DAY(NOW())-1,' 23:59:59'))
+        and account =#{account}
+
+    </select>
+    <select id="getMonthlyIncome" resultType="double">
+        SELECT ifnull(SUM(giftMoney),0) FROM acceptgift WHERE (sendTime BETWEEN CONCAT(YEAR(NOW()),'-',MONTH(NOW())-1,'-',DAY(NOW()),' ',TIME_FORMAT(NOW(),'%h:%i:%s')) AND NOW() ) and account = #{account}
+    </select>
+    <select id="getLastMonthMoney" resultType="double">
+        SELECT ifnull(SUM(giftMoney),0) FROM acceptgift WHERE (sendTime BETWEEN CONCAT(YEAR(NOW()),'-',MONTH(NOW())-2,'-',DAY(NOW()),' ',TIME_FORMAT(NOW(),'%h:%i:%s')) AND  CONCAT(YEAR(NOW()),'-',MONTH(NOW())-1,'-',DAY(NOW()),' ',TIME_FORMAT(NOW(),'%h:%i:%s'))) AND account =#{account}
+    </select>
+    <insert id="addWithdrawal">
+        insert into withdrawal value(default,now(),#{money},(select uid from user where account =#{account}),0,#{payAccount})
+    </insert>
+    <update id="Deduction">
+        update user set blance =blance-${money} where account =#{account}
+    </update>
+    <select id="getWithdrawal" resultType="WithdrawalPojo">
+        select * from withdrawal where uid = (select uid from user where account=#{account})
+    </select>
+    <select id="getMonthlyIncomePojo" resultType="MonthlyIncomePojo">
+        SELECT
+        MONTH(sendTime) 'month',
+        ifnull(SUM(g.giftMoney),0) 'money'
+        FROM giftrecord gc ,gift g
+        WHERE gc.giftId=g.giftId
+        AND gc.reId=(SELECT uId from `user` WHERE account=#{account})
+        and year(gc.sendTime)=year(now())
+        GROUP BY MONTH(sendTime)
+
+    </select>
+    <select id="getMaxAndMinMonthlyIncomePojo" resultType="MonthlyIncomePojo">
+        SELECT ifnull(MAX(g.giftMoney),0) 'maxMoney',ifnull(MIN(g.giftMoney),0) 'minMoney'
+        from giftrecord gc ,gift g
+        WHERE YEAR(gc.sendTime)=YEAR(NOW()) AND MONTH(gc.sendTime) =#{month} and gc.reId=(SELECT uId from `user` WHERE account=#{account})
+        GROUP BY gc.sendTime
+        LIMIT 0 ,1
+    </select>
+    <select id="getAllGiftList" resultType="AllGiftPojo">
+        SELECT
+        u.img 'url',
+        u.uName 'name',
+        SUM(g.giftMoney) 'CountMoney'
+        from giftrecord gf ,`user` u ,gift g
+        WHERE u.uId=gf.sendId
+        AND g.giftId=gf.giftId
+        AND (gf.reId=(SELECT uId FROM `user` WHERE account=#{account}))
+        GROUP BY gf.sendId
+        ORDER BY SUM(g.giftMoney) DESC
+        limit 0,100
+    </select>
+    
+    <select id="getUserPhone" resultType="String">
+        select phone from user where account=#{account}
+    </select>
+
+    <select id="getUserInformation" resultType="UserInformationPojo">
+        SELECT account,uName,sex,adress,uTypeId,fan FROM `user` where account=#{account}
+    </select>
+
+    <update id="SetAnchorInformation" >
+        update user
+        <set>
+            sex=#{sex},
+            <if test="uName.trim().length()!=0 and uName!=null">
+                 uName=#{uName},
+            </if>
+            <if test="adress.trim().length()!=0 and adress!=null">
+                 adress=#{adress},
+            </if>
+            <if test="newPhone.trim().length()!=0 and newPhone!=null">
+                 phone=#{newPhone},
+            </if>
+        </set>
+        where account=#{account}
+        <if test="oldPhone!=null and oldPhone.trim().length()!=0">
+            and phone=#{oldPhone}
+        </if>
+    </update>
+    <update id="setImgUrl">
+        update user set img =#{uuid} where account=#{account}
+    </update>
+</mapper>
