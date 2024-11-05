@@ -203,7 +203,7 @@ INSERT INTO `user` VALUES (2, '哈哈', '456797', '1486315', '/陆小果.jpg', 5
 INSERT INTO `user` VALUES (3, '嘻嘻', '791156', '153599', 'touxiang7.png', 54, 34, 7645, '11223344556', '男', '湖南长沙', 2, 'ee');
 INSERT INTO `user` VALUES (4, '杀手', '6443163', '4651355', 'touxiang3.png', 432, 53, 523, '23423423432', '女', '湖南湘潭', 1, 'sd');
 INSERT INTO `user` VALUES (5, '苏打', '24435313', '645133', 'touxiang9.png', 43, 423, 532, '42342342343', '男', '湖南株洲', 3, 'uf');
-INSERT INTO `user` VALUES (6, 'test', 'tesst', '123456', '7d1b06ca-c449-443f-bcaf-a34ed7c4b4e6.png', 0, 30, 291, '19873929472', '男', '华南F4', 3, '64f1e64c-8ba9-4431-8ddf-e0cb1609d863');
+INSERT INTO `user` VALUES (6, 'test', 'tesst', '123456', '7d1b06ca-c449-443f-bcaf-a34ed7c4b4e6.png', 0, 30, 291, '123456', '男', '华南F4', 3, '64f1e64c-8ba9-4431-8ddf-e0cb1609d863');
 INSERT INTO `user` VALUES (7, '梦16656', '12345', '12345', '/陆小果.jpg', 0, 0, 0, '123132141', '男', NULL, 3, NULL);
 INSERT INTO `user` VALUES (8, 'doau', 'test2', '456789', '/陆小果.jpg', -1, 0, 983, '5316131', '女', '221', 2, NULL);
 INSERT INTO `user` VALUES (9, '大家哦', '456789', '123456', '/陆小果.jpg', -1, 0, 9, '13207355962', '男', '156', 2, NULL);
@@ -268,8 +268,8 @@ CREATE TABLE `withdrawal`  (
 -- ----------------------------
 INSERT INTO `withdrawal` VALUES (1, '2024-10-16 10:55:03', 500.00, 2, 1, '234123');
 INSERT INTO `withdrawal` VALUES (2, '2024-10-22 10:57:08', 400.00, 2, 1, '675872');
-INSERT INTO `withdrawal` VALUES (3, '2024-10-24 05:37:20', 10.00, 6, 1, '19873929472');
-INSERT INTO `withdrawal` VALUES (4, '2024-10-24 14:10:06', 10.00, 6, 1, '19873929472');
+INSERT INTO `withdrawal` VALUES (3, '2024-10-24 05:37:20', 10.00, 6, 1, '123456');
+INSERT INTO `withdrawal` VALUES (4, '2024-10-24 14:10:06', 10.00, 6, 1, '123456');
 
 -- ----------------------------
 -- View structure for acceptgift
